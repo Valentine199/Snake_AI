@@ -3,10 +3,12 @@ import random
 from enum import Enum
 from collections import namedtuple
 
+# Call init functions state a font
 pygame.init()
 font = pygame.font.SysFont('arial.ttf', 25)
 
 
+# Use Enum to define directions right
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
@@ -14,6 +16,7 @@ class Direction(Enum):
     DOWN = 4
 
 
+# define constants
 Point = namedtuple('Point', 'x, y')
 BLOCK_SIZE = 20
 SPEED = 5
@@ -37,16 +40,19 @@ class SnakeGame:
 
         # init game state
         self.direction = Direction.RIGHT
-
+        # Init snake according to head
         self.head = Point(self.w/2, self.h/2)
         self.snake = [self.head,
                       Point(self.head.x-BLOCK_SIZE, self.head.y),
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
+
         self.score = 0
         self.food = None
         self._place_food()
 
     def _place_food(self):
+        # Tries to randomly place food on the screen,
+        # if it is at a point where something else is it looks for another
         x = random.randint(0, (self.w-BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
         y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
 
@@ -86,7 +92,7 @@ class SnakeGame:
         # hits boundary
         if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h-BLOCK_SIZE or self.head.y < 0:
             return True
-
+        # hits self
         if self.head in self.snake[1:]:
             return True
 
@@ -94,6 +100,7 @@ class SnakeGame:
     
     def play_step(self):
         # 1. collect user input
+        # saves it in direction, so we can know what direction is pressed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -109,6 +116,7 @@ class SnakeGame:
                     self.direction = Direction.DOWN
 
         # 2. move snake
+        # depending on direction creates another block
         self._move(self.direction)  # updates head
         self.snake.insert(0, self.head)
 
@@ -119,6 +127,7 @@ class SnakeGame:
             return game_over, self.score
 
         # 4. new food if needed
+        # if we are on food replace the food else we don't lengthen the snake. We finalize moving here
         if self.head == self.food:
             self.score += 1
             self._place_food()
@@ -130,7 +139,6 @@ class SnakeGame:
         self.clock.tick(SPEED)
 
         # 6. return if game over and score
-
         return game_over, self.score
 
 
