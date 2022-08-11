@@ -6,21 +6,24 @@ from collections import namedtuple
 pygame.init()
 font = pygame.font.SysFont('arial.ttf', 25)
 
+
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
     UP = 3
     DOWN = 4
 
+
 Point = namedtuple('Point', 'x, y')
 BLOCK_SIZE = 20
 SPEED = 5
 
 WHITE = (255, 255, 255)
-BLACK = (0,0,0)
-RED = (200,0,0)
-BLUE1 = (0,0,255)
-BLUE2 = (0,100,255)
+BLACK = (0, 0, 0)
+RED = (200, 0, 0)
+BLUE1 = (0, 0, 255)
+BLUE2 = (0, 100, 255)
+
 
 class SnakeGame:
     def __init__(self, w=640, h=480):
@@ -36,7 +39,9 @@ class SnakeGame:
         self.direction = Direction.RIGHT
 
         self.head = Point(self.w/2, self.h/2)
-        self.snake = [self.head, Point(self.head.x-BLOCK_SIZE, self.head.y), Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
+        self.snake = [self.head,
+                      Point(self.head.x-BLOCK_SIZE, self.head.y),
+                      Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
         self.score = 0
         self.food = None
         self._place_food()
@@ -58,8 +63,8 @@ class SnakeGame:
 
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
-        text = font.render("Score: " +str(self.score), True, WHITE)
-        self.display.blit(text, [0,0])
+        text = font.render("Score: " + str(self.score), True, WHITE)
+        self.display.blit(text, [0, 0])
         pygame.display.flip()
 
     def _move(self, direction):
@@ -103,11 +108,11 @@ class SnakeGame:
                 elif event.key == pygame.K_DOWN:
                     self.direction = Direction.DOWN
 
-        #2. move snake
-        self._move(self.direction) # updates head
+        # 2. move snake
+        self._move(self.direction)  # updates head
         self.snake.insert(0, self.head)
 
-        # check game-over
+        # 3. check game-over
         game_over = False
         if self._is_collision():
             game_over = True
@@ -129,17 +134,15 @@ class SnakeGame:
         return game_over, self.score
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     game = SnakeGame()
 
     while True:
         game_over, score = game.play_step()
 
-        if game_over == True:
+        if game_over:
             break
 
     print('Final Score:', score)
 
-    
     pygame.quit()
