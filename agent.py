@@ -12,7 +12,7 @@ LR = 0.001  # Learning rate
 
 
 class Agent:
-    def __int__(self):
+    def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness
         self.gamma = 0.9 # discount rate
