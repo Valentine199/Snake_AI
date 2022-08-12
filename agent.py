@@ -96,20 +96,34 @@ class Agent:
 
         return final_move
 
+    def get_play(self, state):
+        self.model.eval()
+        action = [0, 0, 0]
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.model.forward(state0)
+        move = torch.argmax(prediction).item()
+        action[move] = 1
 
-def train():
+        return action
+
+
+def train(begin_train = True):
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
     record = 0
     agent = Agent()
+    agent.model.load()
     game = SnakeGameAi()
     while True:
         # get old state
         state_old = agent.get_state(game)
 
         # get move
-        final_move = agent.get_action(state_old)
+        if begin_train:
+            final_move = agent.get_action(state_old)
+        else:
+            final_move = agent.get_play(state_old)  # agent.get_action(state_old)
 
         # perform the move, get new state
         reward, done, score = game.play_step(final_move)
@@ -141,5 +155,21 @@ def train():
             plot(plot_scores, plot_mean_scores)
 
 
-if __name__ == '__main__':
-    train()
+
+
+
+def main():
+    agent = Agent()
+    agent.model.load()
+    game = SnakeGameAi()
+    while True:
+        state_old = agent.get_state(game)
+        action = agent.get_play(state_old)
+        reward, game_over, score = game.play_step(action)
+        if game_over:
+            game.reset()
+
+
+if __name__ == "__main__":
+    train(begin_train=False)
+    # main()
